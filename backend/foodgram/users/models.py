@@ -42,12 +42,10 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name='Подписчик',
-        verbose_name_plural='Подписчики'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='following',
         verbose_name='Автор',
-        verbose_name_plural='Авторы'
     )
