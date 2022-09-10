@@ -6,13 +6,11 @@ class User(AbstractUser):
     email = models.EmailField(
         max_length=254,
         unique=True,
-        blank=False,
         verbose_name='Адрес электронной почты'
     )
     username = models.CharField(
         max_length=150,
         unique=True,
-        blank=False,
         verbose_name='Уникальное имя пользователя'
     )
     first_name = models.CharField(
@@ -36,7 +34,7 @@ class User(AbstractUser):
         return self.username
 
 
-class Follow(models.Model):
+""" class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -49,3 +47,4 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор',
     )
+ """
