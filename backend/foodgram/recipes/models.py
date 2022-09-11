@@ -3,18 +3,25 @@ from users.models import User
 
 
 class Tag(models.Model):
+    """Модель тега."""
+
     name = models.CharField(
-        max_length=100,
+        max_length=200,
+        unique=True
     )
+    #  Пока не понял, как пользователь выберет цвет
     color = models.CharField(
         max_length=7,
+        unique=True
     )
+    #  Нужно добавить разрешение только этих символов ^[-a-zA-Z0-9_]+$
     slug = models.SlugField(
         max_length=100,
         unique=True
     )
 
     class Meta:
+        ordering = ['-pk']
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -23,19 +30,19 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
+    """Модель ингредиента."""
+
     name = models.CharField(
-        max_length=100,
+        max_length=200,
         verbose_name='Ингредиент'
     )
-    quantity = models.FloatField(
-        verbose_name='Количество'
-    )
     measurement_unit = models.CharField(
-        max_length=100,
+        max_length=200,
         verbose_name='Единица измерения'
     )
 
     class Meta:
+        ordering = ['name']
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -44,22 +51,8 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Автор рецепта'
-    )
-    name = models.CharField(
-        max_length=200,
-        verbose_name='Блюдо'
-    )
-    image = models.ImageField(
-        verbose_name='Изображение',
-        blank=True
-    )
-    text = models.TextField(
-        verbose_name='Рецепт'
-    )
+    """Модель рецепта."""
+
     ingredients = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
@@ -69,4 +62,25 @@ class Recipe(models.Model):
         Tag,
         on_delete=models.CASCADE,
         verbose_name='Теги'
+    )
+    image = models.ImageField(
+        verbose_name='Изображение',
+        blank=True
+    )
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Блюдо'
+    )
+    text = models.TextField(
+        verbose_name='Рецепт'
+    )
+    cooking_time = models.IntegerField(
+        #  min_value=1,
+        verbose_name='Время приготовления'
+    )
+    author = models.ForeignKey(
+        User,
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
+        verbose_name='Автор рецепта'
     )

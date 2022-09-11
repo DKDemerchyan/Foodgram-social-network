@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    """Модель пользователя Foodgram."""
+
     email = models.EmailField(
         max_length=254,
         unique=True,
@@ -27,6 +29,7 @@ class User(AbstractUser):
     )
 
     class Meta:
+        ordering = ['-pk']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
@@ -34,7 +37,9 @@ class User(AbstractUser):
         return self.username
 
 
-""" class Follow(models.Model):
+class Follow(models.Model):
+    """Модель подписки пользователей на авторов контента."""
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -47,4 +52,11 @@ class User(AbstractUser):
         related_name='following',
         verbose_name='Автор',
     )
- """
+
+    class Meta:
+        ordering = ['-pk']
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user} подписан на {self.author}'
