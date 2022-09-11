@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from users.models import User
 
 
@@ -9,7 +10,8 @@ class Tag(models.Model):
         max_length=200,
         unique=True
     )
-    #  Пока не понял, как пользователь выберет цвет
+    #  Пока не понял, как пользователь выберет цвет, не вводить же HEX-код.
+    #  Наверно сделаю CHOICES
     color = models.CharField(
         max_length=7,
         unique=True
@@ -74,8 +76,10 @@ class Recipe(models.Model):
     text = models.TextField(
         verbose_name='Рецепт'
     )
-    cooking_time = models.IntegerField(
-        #  min_value=1,
+    cooking_time = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(
+            1, message='Минимальное время приготовления одна минута.'
+        )],
         verbose_name='Время приготовления'
     )
     author = models.ForeignKey(

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User
+from .models import User, Follow
 
 
 @admin.register(User)
@@ -13,4 +13,17 @@ class UserAdmin(admin.ModelAdmin):
         'is_staff',
         'is_active',
         'date_joined',
+    )
+    list_filter = (
+        'username',
+        'email',
+        'is_staff'
+    )
+
+
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'author'
     )
