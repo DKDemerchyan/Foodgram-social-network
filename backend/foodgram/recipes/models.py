@@ -16,7 +16,7 @@ class Tag(models.Model):
         max_length=7,
         unique=True
     )
-    #  Нужно добавить разрешение только этих символов ^[-a-zA-Z0-9_]+$
+    #  Нужно добавить разрешение только для хекс кода через регулярки
     slug = models.SlugField(
         max_length=100,
         unique=True
@@ -55,6 +55,10 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     """Модель рецепта."""
 
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Блюдо'
+    )
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientRecipe',
@@ -70,19 +74,15 @@ class Recipe(models.Model):
         verbose_name='Изображение',
         blank=True
     )
-    name = models.CharField(
-        max_length=200,
-        verbose_name='Блюдо'
-    )
     text = models.TextField(
         verbose_name='Рецепт'
     )
-#    cooking_time = models.PositiveSmallIntegerField(
-#        validators=[MinValueValidator(
-#            1, message='Минимальное время приготовления одна минута.'
-#        )],
-#        verbose_name='Время приготовления'
-#    )
+    cooking_time = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(
+            1, message='Минимальное время приготовления одна минута.'
+        )],
+        verbose_name='Время приготовления'
+    )
     author = models.ForeignKey(
         User,
         blank=True, null=True,
@@ -90,6 +90,14 @@ class Recipe(models.Model):
         verbose_name='Автор рецепта',
         related_name='recipes'
     )
+
+    class Meta:
+        ordering = ['-pk']
+        verbose_name = 'Рецепт блюда'
+        verbose_name_plural = 'Рецепты блюд'
+
+    def __str__(self):
+        return self.name
 
 
 class IngredientRecipe(models.Model):
