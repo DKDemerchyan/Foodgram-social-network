@@ -3,6 +3,6 @@ from recipes.models import Recipe
 from .serializers import RecipeListSerializer
 
 
-class RecipeListViewSet(viewsets.ModelViewSet):
+class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
