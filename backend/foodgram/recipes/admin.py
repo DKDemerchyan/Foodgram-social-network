@@ -9,3 +9,19 @@ class TagAdmin(admin.ModelAdmin):
         'color',
         'slug'
     )
+
+
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'measurement_unit'
+    )
+
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'author'
+    )

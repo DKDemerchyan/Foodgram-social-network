@@ -16,14 +16,30 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
+    """Сериализатор для списка рецептов."""
+
     tag = TagSerializer(many=True)
+    #  Должна быть кнопка добавления покупки
 
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'tag', 'image', 'author', 'cooking_time')
 
 
-class RecipeDetailSerializer(serializers.ModelSerializer):
+class RecipeReadSerializer(serializers.ModelSerializer):
+    """Сериализатор чтения рецепта."""
+
+    tag = TagSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'tag', 'image', 'author',
+                  'cooking_time', 'ingredients', 'text')
+
+
+class RecipePostSerializer(serializers.ModelSerializer):
+    """Сериализатор публикации нового рецепта."""
+
     tag = TagSerializer(many=True)
 
     class Meta:
