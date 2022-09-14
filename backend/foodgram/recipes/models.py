@@ -55,15 +55,16 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     """Модель рецепта."""
 
-    ingredients = models.ForeignKey(
+    ingredients = models.ManyToManyField(
         Ingredient,
-        on_delete=models.CASCADE,
+        through='IngredientRecipe',
         verbose_name='Ингредиенты'
     )
-    tags = models.ForeignKey(
+    tag = models.ForeignKey(
         Tag,
         on_delete=models.CASCADE,
-        verbose_name='Теги'
+        verbose_name='Теги',
+        related_name='recipes'
     )
     image = models.ImageField(
         verbose_name='Изображение',
@@ -76,15 +77,38 @@ class Recipe(models.Model):
     text = models.TextField(
         verbose_name='Рецепт'
     )
-    cooking_time = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(
-            1, message='Минимальное время приготовления одна минута.'
-        )],
-        verbose_name='Время приготовления'
-    )
+#    cooking_time = models.PositiveSmallIntegerField(
+#        validators=[MinValueValidator(
+#            1, message='Минимальное время приготовления одна минута.'
+#        )],
+#        verbose_name='Время приготовления'
+#    )
     author = models.ForeignKey(
         User,
         blank=True, null=True,
         on_delete=models.SET_NULL,
-        verbose_name='Автор рецепта'
+        verbose_name='Автор рецепта',
+        related_name='recipes'
     )
+
+
+class IngredientRecipe(models.Model):
+    """Модель для связи ингредиентов и рецепта, а также указания количества."""
+
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE
+    )
+    quantity = models.FloatField(
+        verbose_name='Количество'
+    )
+
+
+#  Модель избранного
+
+
+#  Модель продуктовой тележки
