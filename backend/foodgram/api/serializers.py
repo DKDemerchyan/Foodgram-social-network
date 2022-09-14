@@ -15,9 +15,18 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeListSerializer(serializers.ModelSerializer):
     tag = TagSerializer(many=True)
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = ('id', 'name', 'tag', 'image', 'author', 'cooking_time')
+
+
+class RecipeDetailSerializer(serializers.ModelSerializer):
+    tag = TagSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'tag', 'image', 'author',
+                  'cooking_time', 'ingredients', 'text')
