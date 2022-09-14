@@ -18,12 +18,12 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeListSerializer(serializers.ModelSerializer):
     """Сериализатор для списка рецептов."""
 
-    tag = TagSerializer(many=True)
+    author = serializers.StringRelatedField(read_only=True)
     #  Должна быть кнопка добавления покупки
 
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'tag', 'image', 'author', 'cooking_time')
+        fields = ('id', 'name', 'author', 'cooking_time')
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
