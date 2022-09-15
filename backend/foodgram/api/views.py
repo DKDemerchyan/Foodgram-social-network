@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from recipes.models import Tag, Ingredient, Recipe
 from .serializers import (
-    IngredientSerializer, RecipeListSerializer, TagSerializer
+    IngredientSerializer, RecipeListSerializer, TagSerializer,
 )
 
 
