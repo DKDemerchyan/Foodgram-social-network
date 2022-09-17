@@ -111,7 +111,7 @@ class IngredientRecipe(models.Model):
         Recipe,
         on_delete=models.CASCADE
     )
-    quantity = models.FloatField(
+    quantity = models.PositiveSmallIntegerField(
         verbose_name='Количество'
     )
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from recipes.models import Tag, Ingredient, Recipe
+from recipes.models import IngredientRecipe, Tag, Ingredient, Recipe
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -15,34 +15,47 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RecipeListSerializer(serializers.ModelSerializer):
-    """Сериализатор для списка рецептов."""
-
-    author = serializers.StringRelatedField(read_only=True)
-    #  Должна быть кнопка добавления покупки
+class IngredientRecipeSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+    )
 
     class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'author', 'cooking_time')
+        model = IngredientRecipe
+        fields = ('id', 'name', 'measurement_unit', 'quantity')
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор чтения рецепта."""
 
-    tag = TagSerializer(many=True)
+    tags = TagSerializer(many=True, read_only=True)
+    #  author = UserSerializer - надо написать
+    ingredients = serializers.SerializerMethodField()
+    is_in_favorites = serializers.SerializerMethodField()
+    is_in_shopping_list = serializers.SerializerMethodField()
+
+    def get_ingredients(self, obj):
+        ingredients = IngredientRecipe.objects.filter(recipe=obj)
+        return IngredientRecipeSerializer(ingredients, many=True).data
+
+    def get_is_in_favorites(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return user.favorites.filter(recipe=obj).exists()
+
+    def get_is_in_shopping_list(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return user.shopping_list.filter(recipe=obj).exists()
 
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'tag', 'image', 'author',
-                  'cooking_time', 'ingredients', 'text')
-
-
-class RecipePostSerializer(serializers.ModelSerializer):
-    """Сериализатор публикации нового рецепта."""
-
-    tag = TagSerializer(many=True)
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'tag', 'image', 'author',
-                  'cooking_time', 'ingredients', 'text')
+        fields = (
+            'id', 'tags', 'author', 'ingredients',
+            'text', 'is_in_favorites', 'is_in_shopping_list',
+            'name', 'image', 'text', 'cooking_time'
+        )
