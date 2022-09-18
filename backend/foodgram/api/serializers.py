@@ -2,9 +2,10 @@ from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import IngredientRecipe, Tag, Ingredient, Recipe
 from users.models import User
+from djoser.serializers import UserSerializer
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -19,6 +20,17 @@ class UserSerializer(serializers.ModelSerializer):
         if user.is_anonymous or (user == obj):
             return False
         return user.following.filter(id=obj.id).exists()
+
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['lastname'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class TagSerializer(serializers.ModelSerializer):
