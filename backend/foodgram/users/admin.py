@@ -13,6 +13,7 @@ class UserAdmin(admin.ModelAdmin):
         'is_staff',
         'is_active',
         'date_joined',
+        'password',
     )
     list_filter = (
         'username',
