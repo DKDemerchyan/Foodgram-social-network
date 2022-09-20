@@ -62,27 +62,12 @@ class IngredientInRecipeReadSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class IngredientInRecipePostSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели, связывающей ингредиенты с рецептом при публикации.
-    """
-
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
-    )
-    amount = serializers.IntegerField()
-
-    class Meta:
-        model = IngredientInRecipe
-        fields = ('id', 'amount')
-
-
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор чтения рецепта."""
 
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = IngredientInRecipePostSerializer(many=True)
+    ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -111,19 +96,33 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
 
+class IngredientInRecipePostSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели, связывающей ингредиенты с рецептом при публикации.
+    """
+
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all()
+    )
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = IngredientInRecipe
+        fields = ('id', 'amount')
+
+
 class RecipePostSerializer(serializers.ModelSerializer):
     """Сериализатор публикации рецепта."""
 
-    ingredients = IngredientInRecipePostSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all()
     )
-    author = UserSerializer
+    author = UserSerializer(read_only=True)
 
     class Meta:
         model = Recipe
         fields = (
-            'ingredients', 'tags',
+            'ingredients', 'tags', 'author',
             'name', 'text', 'cooking_time'
         )
 
