@@ -139,7 +139,7 @@ class Favorites(models.Model):
         return f'{self.user} добавил "{self.recipe}" в Избранное'
 
 
-class ShoppingList(models.Model):
+class ShoppingCart(models.Model):
 
     user = models.ForeignKey(
         User,

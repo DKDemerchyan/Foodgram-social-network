@@ -38,7 +38,7 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fields = '__all__'
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -46,7 +46,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
@@ -69,20 +69,20 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
-    is_in_favorites = serializers.SerializerMethodField()
-    is_in_shopping_list = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     def get_ingredients(self, obj):
         ingredients = IngredientRecipe.objects.filter(recipe=obj)
         return IngredientRecipeSerializer(ingredients, many=True).data
 
-    def get_is_in_favorites(self, obj):
+    def get_is_favorited(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
         return user.favorites.filter(recipe=obj).exists()
 
-    def get_is_in_shopping_list(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
@@ -92,7 +92,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id', 'tags', 'author', 'ingredients',
-            'is_in_favorites', 'is_in_shopping_list',
+            'is_favorited', 'is_in_shopping_cart',
             'name', 'image', 'text', 'cooking_time'
         )
 
