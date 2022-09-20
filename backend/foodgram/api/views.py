@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from recipes.models import Tag, Ingredient, Recipe
 from users.models import User
 from .serializers import (
@@ -6,7 +6,6 @@ from .serializers import (
     RecipeReadSerializer, TagSerializer,
     CustomUserSerializer
 )
-from rest_framework.permissions import SAFE_METHODS
 from djoser.views import UserViewSet
 
 
@@ -22,10 +21,9 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeReadSerializer
 
     def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
+        if self.request.method in permissions.SAFE_METHODS:
             return RecipeReadSerializer
         return RecipePostSerializer
 

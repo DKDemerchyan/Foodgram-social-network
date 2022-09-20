@@ -61,7 +61,7 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='IngredientRecipe',
+        through='IngredientInRecipe',
         verbose_name='Ингредиенты',
         related_name='recipes'
     )
@@ -100,7 +100,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class IngredientRecipe(models.Model):
+class IngredientInRecipe(models.Model):
     """Модель для связи ингредиентов и рецепта, а также указания количества."""
 
     ingredient = models.ForeignKey(
@@ -111,12 +111,24 @@ class IngredientRecipe(models.Model):
         Recipe,
         on_delete=models.CASCADE
     )
-    amount = models.PositiveSmallIntegerField(
-        verbose_name='Количество'
+    amount = models.IntegerField(
+        verbose_name='Количество',
+        validators=[MinValueValidator(1, message='Минимальное количество 1!')]
     )
 
+    class Meta:
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
 
-class Favorites(models.Model):
+    def __str__(self):
+        return (
+            f'Для {self.recipe.name} нужно '
+            f'{self.amount} {self.ingredient.measurement_unit} '
+            f'{self.ingredient.name}'
+        )
+
+
+class Favorite(models.Model):
 
     user = models.ForeignKey(
         User,
