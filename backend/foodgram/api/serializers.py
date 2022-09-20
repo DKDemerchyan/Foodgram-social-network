@@ -49,8 +49,8 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 
-class IngredientRecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор модели, связывающей ингредиенты с рецептом."""
+class IngredientRecipeReadSerializer(serializers.ModelSerializer):
+    """Сериализатор модели, связывающей ингредиенты с рецептом при чтении."""
 
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
@@ -61,6 +61,17 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount')
+
+
+class IngredientRecipePostSerializer(serializers.ModelSerializer):
+    """Сериализатор модели, связывающей ингредиенты с рецептом при публикации."""
+
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'amount')
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
@@ -74,7 +85,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         ingredients = IngredientRecipe.objects.filter(recipe=obj)
-        return IngredientRecipeSerializer(ingredients, many=True).data
+        return IngredientRecipeReadSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
@@ -100,7 +111,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipePostSerializer(serializers.ModelSerializer):
     """Сериализатор публикации рецепта."""
 
-    ingredients = IngredientRecipeSerializer(many=True)
+    ingredients = IngredientRecipePostSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all()
     )
@@ -110,6 +121,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'author', 'ingredients',
-            'name', 'image', 'text', 'cooking_time'
+            'ingredients', 'tags', 'image',
+            'name', 'text', 'cooking_time'
         )
