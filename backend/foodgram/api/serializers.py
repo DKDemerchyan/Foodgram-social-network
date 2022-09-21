@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from recipes.models import (
-    Favorite, IngredientInRecipe, Tag, Ingredient, Recipe
+    Favorite, IngredientInRecipe, ShoppingCart, Tag, Ingredient, Recipe
 )
 from users.models import User
 from djoser.serializers import UserSerializer
@@ -52,7 +52,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 
-class IngredientInRecipeReadSerializer(serializers.ModelSerializer):
+class IngredientReadSerializer(serializers.ModelSerializer):
     """Сериализатор модели, связывающей ингредиенты с рецептом при чтении."""
 
     id = serializers.ReadOnlyField(source='ingredient.id')
@@ -91,19 +91,32 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         ingredients = IngredientInRecipe.objects.filter(recipe=obj)
-        return IngredientInRecipeReadSerializer(ingredients, many=True).data
+        return IngredientReadSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
             return False
-        return user.favorites.filter(recipe=obj).exists()
+        return Favorite.objects.filter(user=request.user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
             return False
-        return user.shopping_cart.filter(recipe=obj).exists()
+        return (
+            ShoppingCart.objects.filter(user=request.user, recipe=obj).exists()
+        )
+
+
+class IngredientPostSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all()
+    )
+    amount = serializers.IntegerField
+
+    class Meta:
+        model = IngredientInRecipe
+        fields = ('id', 'amount')
 
 
 class RecipePostSerializer(serializers.ModelSerializer):
@@ -112,7 +125,8 @@ class RecipePostSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all()
     )
-    author = UserSerializer(read_only=True)
+    ingredients = IngredientPostSerializer(many=True)
+    author = CustomUserSerializer(read_only=True)
 
     class Meta:
         model = Recipe
