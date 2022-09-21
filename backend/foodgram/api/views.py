@@ -2,11 +2,13 @@ from rest_framework import viewsets, permissions
 from recipes.models import Tag, Ingredient, Recipe
 from users.models import User
 from .serializers import (
-    IngredientSerializer, RecipePostSerializer,
+    FavoriteSerializer, IngredientSerializer, RecipePostSerializer,
     RecipeReadSerializer, TagSerializer,
     CustomUserSerializer
 )
 from djoser.views import UserViewSet
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -26,6 +28,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in permissions.SAFE_METHODS:
             return RecipeReadSerializer
         return RecipePostSerializer
+
+    def favorite(self, request, pk):
+        data = {
+            'user': request.user.id,
+            'recipe': pk
+        }
+        serializer = FavoriteSerializer(
+            data=data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CustomUserViewSet(UserViewSet):

@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from recipes.models import IngredientInRecipe, Tag, Ingredient, Recipe
+from recipes.models import (
+    Favorite, IngredientInRecipe, Tag, Ingredient, Recipe
+)
 from users.models import User
 from djoser.serializers import UserSerializer
 
@@ -62,6 +64,12 @@ class IngredientInRecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount')
+
+
+class RecipeShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
@@ -177,3 +185,36 @@ class RecipePostSerializer(serializers.ModelSerializer):
         self.create_tags(tags, recipe)
         self.create_ingredients(ingredients, recipe)
         return recipe
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    """Сериализатор модели избранного."""
+
+    user = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='username'
+    )
+    recipe = serializers.SlugRelatedField(
+        queryset=Recipe.objects.all(),
+        slug_field='name'
+    )
+
+    class Meta:
+        model = Favorite
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        recipe = data['recipe']
+        if Favorite.objects.get(user=request.user, recipe=recipe).exists():
+            raise serializers.ValidationError({
+                'status': 'Рецепт уже есть в избранном!'
+            })
+        return data
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return RecipeShortSerializer(instance.recipe, context=context).data
