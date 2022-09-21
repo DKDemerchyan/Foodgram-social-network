@@ -203,11 +203,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        recipe = data['recipe']
-        if Favorite.objects.get(user=request.user, recipe=recipe).exists():
-            raise serializers.ValidationError({
-                'status': 'Рецепт уже есть в избранном!'
-            })
         return data
 
     def to_representation(self, instance):
