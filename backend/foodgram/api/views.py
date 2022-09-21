@@ -1,13 +1,12 @@
 from rest_framework import viewsets, permissions
 from recipes.models import Tag, Ingredient, Recipe, Favorite
 from django.shortcuts import get_object_or_404
-from users.models import User
+
 from .serializers import (
     FavoriteSerializer, IngredientSerializer, RecipePostSerializer,
     RecipeReadSerializer, TagSerializer,
-    CustomUserSerializer
 )
-from djoser.views import UserViewSet
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -53,8 +52,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class CustomUserViewSet(UserViewSet):
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
