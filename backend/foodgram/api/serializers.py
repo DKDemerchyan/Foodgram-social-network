@@ -5,6 +5,8 @@ from djoser.serializers import UserSerializer
 
 
 class CustomUserSerializer(UserSerializer):
+    """Сериализатор кастомной модели пользователя."""
+
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -94,21 +96,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'is_favorited', 'is_in_shopping_cart',
             'name', 'image', 'text', 'cooking_time'
         )
-
-
-class IngredientInRecipePostSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели, связывающей ингредиенты с рецептом при публикации.
-    """
-
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
-    )
-    amount = serializers.IntegerField()
-
-    class Meta:
-        model = IngredientInRecipe
-        fields = ('id', 'amount')
 
 
 class RecipePostSerializer(serializers.ModelSerializer):
