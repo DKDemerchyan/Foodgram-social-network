@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from recipes.models import Tag, Ingredient, Recipe, Favorite
 from django.shortcuts import get_object_or_404
-
+from .pagination import RecipePagination
 from .serializers import (
     FavoriteSerializer, IngredientSerializer, RecipePostSerializer,
     RecipeReadSerializer, TagSerializer,
@@ -24,13 +24,14 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    pagination_class = RecipePagination
 
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
             return RecipeReadSerializer
         return RecipePostSerializer
 
-    @action(detail=True)
+    @action(detail=True, permission_classes=[permissions.IsAuthenticated])
     def favorite(self, request, pk):
         data = {
             'user': request.user.id,

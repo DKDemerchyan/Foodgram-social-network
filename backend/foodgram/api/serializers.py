@@ -80,6 +80,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class IngredientPostSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели, связывающей ингредиенты с рецептом при публикации.
+    """
+
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
     )
@@ -102,7 +106,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'ingredients', 'tags', 'author',
+            'id', 'author', 'ingredients', 'tags',
             'name', 'text', 'cooking_time'
         )
 
@@ -171,6 +175,23 @@ class RecipePostSerializer(serializers.ModelSerializer):
         self.create_ingredients(ingredients, recipe)
         return recipe
 
+    def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get(
+            'cooking_time', instance.cooking_time
+        )
+        instance.tags.clear()
+        tags = validated_data.get('tags')
+        self.create_tags(tags, instance)
+
+        IngredientInRecipe.objects.filter(recipe=instance).all().delete()
+        ingredients = validated_data.get('ingredients')
+        self.create_ingredients(ingredients, instance)
+        instance.save()
+        return instance
+
     def to_representation(self, instance):
         request = self.context.get('request')
         context = {'request': request}
@@ -188,6 +209,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
+        recipe = data['recipe']
+        if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
+            raise serializers.ValidationError({
+                'status': 'Рецепт ранее добавлен в избранное.'
+            })
         return data
 
     def to_representation(self, instance):
