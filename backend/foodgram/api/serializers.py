@@ -21,6 +21,14 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 
+class RecipeShortSerializer(serializers.ModelSerializer):
+    """Сокращенный сериализатор рецепта для представления списка."""
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
 class IngredientReadSerializer(serializers.ModelSerializer):
     """Сериализатор модели, связывающей ингредиенты с рецептом при чтении."""
 
@@ -33,12 +41,6 @@ class IngredientReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount')
-
-
-class RecipeShortSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
