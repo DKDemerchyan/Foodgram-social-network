@@ -6,24 +6,32 @@ from .serializers import (
     FavoriteSerializer, IngredientSerializer, RecipePostSerializer,
     RecipeReadSerializer, TagSerializer,
 )
-
+from .filters import IngredientSearchFilter, RecipeFilter
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from .permissions import AuthorOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
+    permission_classes = (permissions.AllowAny,)
     serializer_class = TagSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
+    permission_classes = (permissions.AllowAny,)
     serializer_class = IngredientSerializer
+    filter_backends = [IngredientSearchFilter]
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = [AuthorOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
     pagination_class = RecipePagination
 
     def get_serializer_class(self):
