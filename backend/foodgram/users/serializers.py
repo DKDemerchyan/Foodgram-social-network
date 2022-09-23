@@ -27,17 +27,17 @@ class CustomUserSerializer(UserSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return Follow.objects.filter(user=request.user, following=obj).exists()
+        return Follow.objects.filter(user=request.user, author=obj).exists()
 
 
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
-        fields = ('user', 'following')
+        fields = ('user', 'author')
         validators = [
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
-                fields=('user', 'following'),
+                fields=('user', 'author'),
                 message=('Вы уже подписаны на данного пользователя!')
             )
         ]
@@ -46,8 +46,8 @@ class FollowSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        following = data['following']
-        if request.user == following:
+        author = data['author']
+        if request.user == author:
             raise serializers.ValidationError(
                 'Вы не можете подписаться на себя!'
             )
@@ -57,7 +57,7 @@ class FollowSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         context = {'request': request}
         return FollowListSerializer(
-            instance.following, context=context).data
+            instance.author, context=context).data
 
 
 class FollowRecipesSerializer(serializers.ModelSerializer):
@@ -80,7 +80,7 @@ class FollowListSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return Follow.objects.filter(user=request.user, following=obj).exists()
+        return Follow.objects.filter(user=request.user, author=obj).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')

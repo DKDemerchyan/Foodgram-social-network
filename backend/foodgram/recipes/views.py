@@ -1,6 +1,5 @@
-from urllib import request
 from rest_framework import viewsets, permissions
-from recipes.models import ShoppingCart, Tag, Ingredient, Recipe, Favorite
+from .models import ShoppingCart, Tag, Ingredient, Recipe, Favorite
 from django.shortcuts import get_object_or_404
 from .pagination import RecipePagination
 from .serializers import (
@@ -43,7 +42,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeReadSerializer
         return RecipePostSerializer
 
-    @action(detail=True, permission_classes=[permissions.IsAuthenticated])
+    @action(
+        detail=True, methods=['post'],
+        permission_classes=[permissions.IsAuthenticated]
+    )
     def favorite(self, request, pk):
         data = {
             'user': request.user.id,
@@ -66,7 +68,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, permission_classes=[permissions.IsAuthenticated])
+    @action(
+        detail=True, methods=['post'],
+        permission_classes=[permissions.IsAuthenticated]
+    )
     def shopping_cart(self, request, pk):
         data = {
             'user': request.user.id,
@@ -80,7 +85,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
-    def delete_shopping_cart(self, reuest, pk):
+    def delete_shopping_cart(self, request, pk):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         shopping_cart = get_object_or_404(
