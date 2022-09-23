@@ -28,6 +28,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = IngredientSerializer
     filter_backends = [IngredientSearchFilter]
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

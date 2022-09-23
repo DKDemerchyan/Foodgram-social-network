@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (
     Favorite, IngredientInRecipe, ShoppingCart, Tag, Ingredient, Recipe
 )
@@ -55,9 +56,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'author', 'ingredients',
-            'is_favorited', 'is_in_shopping_cart',
-            'name', 'image', 'text', 'cooking_time'
+            'id', 'tags', 'author', 'ingredients', 'is_favorited',
+            'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time'
         )
 
     def get_ingredients(self, obj):
@@ -74,9 +74,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return (
-            ShoppingCart.objects.filter(user=request.user, recipe=obj).exists()
-        )
+        return ShoppingCart.objects.filter(
+            user=request.user, recipe=obj).exists()
 
 
 class IngredientPostSerializer(serializers.ModelSerializer):
@@ -87,7 +86,7 @@ class IngredientPostSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
     )
-    amount = serializers.IntegerField
+    amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientInRecipe
@@ -98,15 +97,16 @@ class RecipePostSerializer(serializers.ModelSerializer):
     """Сериализатор публикации рецепта."""
 
     tags = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Tag.objects.all()
+        queryset=Tag.objects.all(), many=True
     )
     ingredients = IngredientPostSerializer(many=True)
     author = CustomUserSerializer(read_only=True)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = (
-            'id', 'author', 'ingredients', 'tags',
+            'id', 'author', 'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time'
         )
 
