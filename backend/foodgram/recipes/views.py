@@ -1,9 +1,12 @@
 from rest_framework import viewsets, permissions
-from .models import ShoppingCart, Tag, Ingredient, Recipe, Favorite
+from .models import (
+    IngredientInRecipe, ShoppingCart, Tag, Ingredient,
+    Recipe, Favorite
+)
 from django.shortcuts import get_object_or_404
 from .pagination import RecipePagination
 from .serializers import (
-    FavoriteSerializer, IngredientReadSerializer, IngredientSerializer,
+    FavoriteSerializer, IngredientSerializer,
     RecipePostSerializer, ShoppingCartSerializer,
     RecipeReadSerializer, TagSerializer
 )
@@ -94,9 +97,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, permission_classes=[permissions.IsAuthenticated])
+    @action(
+        detail=False, methods=['get'],
+        permission_classes=[permissions.IsAuthenticated]
+    )
     def download_shopping_cart(self, request):
-        ingredients = IngredientReadSerializer.objects.filter(
+        ingredients = IngredientInRecipe.objects.filter(
             recipe__shopping_carts__user=request.user).values(
             'ingredient__name', 'ingredient__measurement_unit', 'amount'
         )
