@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from recipes.models import Ingredient
+from recipes.models import Tag
 import json
 
 
@@ -7,17 +7,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        if Ingredient.objects.exists():
+        if Tag.objects.exists():
             print('Данные уже были загружены.')
             return
 
-        print('Начинается загрузка ингредиентов из базы.')
+        print('Начинается загрузка тегов из базы.')
 
-        data = json.load(open('data/ingredients.json', encoding='utf-8'))
+        data = json.load(open('data/tags.json', encoding='utf-8'))
         for row in data:
-            ingredient = Ingredient(
+            tag = Tag(
                 name=row['name'],
-                measurement_unit=row['measurement_unit']
+                color=row['color'],
+                slug=row['slug']
             )
-            ingredient.save()
+            tag.save()
         print('Данные были успешно загружены.')
