@@ -1,5 +1,5 @@
-#  from django.db.models import Sum
-#  from django.http import HttpResponse
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
@@ -99,5 +99,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         ingredients = IngredientInRecipe.objects.filter(
-            recipe__shopping_carts__user=request.user)
-        print(ingredients)
+            recipe__shopping_carts__user=request.user).values(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
+        shopping_cart = '\n'.join([
+            f'{ingredient["ingredient__name"]} - {ingredient["amount"]} '
+            f'{ingredient["ingredient__measurement_unit"]}'
+            for ingredient in ingredients
+        ])
+        filename = 'shopping_cart.txt'
+        response = HttpResponse(shopping_cart, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
