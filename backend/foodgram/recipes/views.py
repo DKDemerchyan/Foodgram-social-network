@@ -7,13 +7,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .filters import IngredientSearchFilter, RecipeFilter
-from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from .models import (Favorite, Ingredient, IngredientInRecipe,
+                     Recipe, ShoppingCart, Tag)
 from .pagination import RecipePagination
 from .permissions import AuthorOrReadOnly
-from .serializers import (FavoriteSerializer, IngredientReadSerializer,
-                          IngredientSerializer, RecipePostSerializer,
-                          RecipeReadSerializer, ShoppingCartSerializer,
-                          TagSerializer)
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipePostSerializer, RecipeReadSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -98,7 +98,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=False, permission_classes=[permissions.IsAuthenticated]
     )
     def download_shopping_cart(self, request):
-        ingredients = IngredientReadSerializer.objects.filter(
+        ingredients = IngredientInRecipe.objects.filter(
             recipe__shopping_carts__user=request.user).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
