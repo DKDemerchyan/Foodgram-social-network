@@ -121,12 +121,12 @@ class IngredientInRecipe(models.Model):
             )
         ]
 
-    #  def __str__(self):
-    #    return (
-    #        f'Для {self.recipe.name} нужно '
-    #        f'{self.amount} {self.ingredient.measurement_unit} '
-    #        f'{self.ingredient.name}'
-    #    )
+    def __str__(self):
+        return (
+            f'Для {self.recipe.name} нужно '
+            f'{self.amount} {self.ingredient.measurement_unit} '
+            f'{self.ingredient.name}'
+        )
 
 
 class Favorite(models.Model):
