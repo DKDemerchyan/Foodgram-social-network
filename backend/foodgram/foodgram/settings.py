@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-)(yputff6u))9sb%k%d%-9g_^0v25=0h@b@l5&w(p8((%j!1v+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-#
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -100,6 +100,9 @@ USE_TZ = True
 
 STATIC_URL = '/static_backend/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_backend/')
+STATICFILES_DIRS = [
+    ("/home/os.getenv('USER')/static_backend/"),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
