@@ -112,6 +112,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if num < ingredients.count() - 1:
                 ingredient_list += ', '
         file = 'shopping_list'
-        response = HttpResponse(ingredient_list, 'Content-Type: application/pdf')
+        response = HttpResponse(
+            ingredient_list, 'Content-Type: application/pdf'
+        )
         response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
         return response
