@@ -7,8 +7,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .filters import IngredientSearchFilter, RecipeFilter
-from .models import (Favorite, Ingredient, IngredientInRecipe,
-                     Recipe, ShoppingCart, Tag)
+from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                     ShoppingCart, Tag)
 from .pagination import RecipePagination
 from .permissions import AuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
