@@ -118,4 +118,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
         return response
-#
