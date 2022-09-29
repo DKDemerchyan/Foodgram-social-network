@@ -1,4 +1,4 @@
-from django.db.models import F, Sum
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -98,7 +98,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=False, methods=['get'],
         permission_classes=[permissions.IsAuthenticated]
     )
-    def download_shopping_cart(request):
+    def download_shopping_cart(self, request):
         ingredient_list = "Cписок покупок:"
         ingredients = IngredientInRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
@@ -113,6 +113,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if num < ingredients.count() - 1:
                 ingredient_list += ', '
         file = 'shopping_list'
-        response = HttpResponse(ingredient_list, 'Content-Type: application/pdf')
+        response = HttpResponse(
+            ingredient_list, 'Content-Type: application/pdf'
+        )
         response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
         return response
