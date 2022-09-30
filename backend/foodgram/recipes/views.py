@@ -38,7 +38,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = RecipePagination
 
     def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
+        if self.request.method == 'GET':
             return RecipeReadSerializer
         return RecipePostSerializer
 
