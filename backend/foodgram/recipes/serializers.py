@@ -64,7 +64,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         ingredients = IngredientInRecipe.objects.filter(recipe=obj)
         return IngredientReadSerializer(ingredients, many=True).data
 
-    def get_is_in(self, obj):
+    def get_is_in(self, obj, model):
         request = self.context.get('request')
         return (
             (request or not request.user.is_anonymous)
@@ -72,10 +72,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        return self.get_is_in(model=Favorite)
+        return self.get_is_in(obj=obj, model=Favorite)
 
     def get_is_in_shopping_cart(self, obj):
-        return self.get_is_in(model=ShoppingCart)
+        return self.get_is_in(obj=obj, model=ShoppingCart)
 
 
 class IngredientPostSerializer(serializers.ModelSerializer):
