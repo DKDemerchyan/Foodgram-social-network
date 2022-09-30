@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker-compose down
+            sudo docker-compose stop
             sudo docker pull davidemer/foodgram-backend:latest
             sudo docker pull davidemer/foodgram-frontend:latest
             sudo docker image prune -f
