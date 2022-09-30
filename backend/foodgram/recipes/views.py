@@ -26,13 +26,13 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = IngredientSerializer
-    filter_backends = [IngredientSearchFilter]
+    filter_backends = (IngredientSearchFilter,)
     search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = [AuthorOrReadOnly]
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = RecipePagination
@@ -69,7 +69,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True, methods=['post'],
+        detail=True, methods=('post',),
         permission_classes=(permissions.IsAuthenticated,)
     )
     def shopping_cart(self, request, pk):
@@ -95,7 +95,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=False, permission_classes=[permissions.IsAuthenticated]
+        detail=False, permission_classes=(permissions.IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
         user = request.user
