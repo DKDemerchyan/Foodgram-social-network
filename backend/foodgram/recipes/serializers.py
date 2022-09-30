@@ -232,8 +232,9 @@ class FavoriteSerializer(BasicSerializer):
     model = Favorite
     status = 'Рецепт ранее добавлен в избранное.'
 
-    def validate_favorite(self, data, model=model, status=status):
-        return self.validate(data=data, model=model, status=status)
+    def validate(self, data):
+        status = 'Рецепт ранее добавлен в избранное.'
+        super().validate(data=data, model=Favorite, status=status)
 
 
 class ShoppingCartSerializer(BasicSerializer):
