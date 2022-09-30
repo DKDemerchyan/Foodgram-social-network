@@ -20,7 +20,7 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -41,7 +41,7 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -86,7 +86,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ['-pk']
+        ordering = ('-pk',)
         verbose_name = 'Рецепт блюда'
         verbose_name_plural = 'Рецепты блюд'
 
@@ -111,7 +111,7 @@ class IngredientInRecipe(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
         constraints = [

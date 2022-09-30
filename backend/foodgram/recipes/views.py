@@ -33,7 +33,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = [AuthorOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = RecipePagination
 
@@ -43,8 +43,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipePostSerializer
 
     @action(
-        detail=True, methods=['post'],
-        permission_classes=[permissions.IsAuthenticated]
+        detail=True, methods=('post',),
+        permission_classes=(permissions.IsAuthenticated,)
     )
     def favorite(self, request, pk):
         data = {

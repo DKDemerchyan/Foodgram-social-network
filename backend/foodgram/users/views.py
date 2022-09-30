@@ -16,7 +16,7 @@ class CustomUserViewSet(UserViewSet):
 
 
 class FollowApiView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, id):
         data = {'user': request.user.id, 'author': id}
@@ -37,7 +37,7 @@ class FollowApiView(APIView):
 
 class FollowListAPIView(ListAPIView):
     pagination_class = RecipePagination
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         user = request.user
