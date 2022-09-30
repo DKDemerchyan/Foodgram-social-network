@@ -32,7 +32,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = [AuthorOrReadOnly]
+    permission_classes = (AuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = RecipePagination
@@ -70,7 +70,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True, methods=['post'],
-        permission_classes=[permissions.IsAuthenticated]
+        permission_classes=(permissions.IsAuthenticated,)
     )
     def shopping_cart(self, request, pk):
         data = {
@@ -114,7 +114,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{ingredient["ingredient__measurement_unit"]} \n'
             )
 
-        filename = f'{user.username}_shopping_list.pdf'
+        filename = f'{user.username}_shopping_list.txt'
         response = HttpResponse(shopping_list, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={filename}'
 
