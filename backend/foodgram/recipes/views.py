@@ -108,11 +108,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         shopping_list = ('')
         for ingredient in ingredients:
-            shopping_list += ([
+            shopping_list += (
                 f'{ingredient["ingredient__name"]} - '
                 f'{ingredient["amount"]} '
                 f'{ingredient["ingredient__measurement_unit"]}'
-            ])
+            )
 
         filename = f'{user.username}_shopping_list.txt'
         response = HttpResponse(shopping_list, content_type='text/plain')
