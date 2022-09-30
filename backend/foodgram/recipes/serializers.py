@@ -202,7 +202,6 @@ class BasicSerializer(serializers.ModelSerializer):
     """Базовый сериализатор для моделей избранного и списка покупок."""
 
     class Meta:
-        model = None
         fields = ('user', 'recipe')
 
     def validate(self, data, model, status):
@@ -228,6 +227,7 @@ class FavoriteSerializer(BasicSerializer):
 
     class Meta:
         model = Favorite
+        fields = ('user', 'recipe')
 
     def validate_favorite(self, data):
         status = 'Рецепт ранее добавлен в избранное.'
@@ -235,12 +235,12 @@ class FavoriteSerializer(BasicSerializer):
         return self.validate(data=data, model=model, status=status)
 
 
-#
 class ShoppingCartSerializer(BasicSerializer):
     """Сериализатор модели списка покупок."""
 
     class Meta:
         model = ShoppingCart
+        fields = ('user', 'recipe')
 
     def validate_shopping_cart(self, data):
         status = 'Рецепт уже есть в списке покупок!'
