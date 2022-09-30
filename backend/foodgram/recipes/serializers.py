@@ -235,6 +235,7 @@ class FavoriteSerializer(BasicSerializer):
         return super().validate(data=data, model=model, status=status)
 
 
+#
 class ShoppingCartSerializer(BasicSerializer):
     """Сериализатор модели списка покупок."""
 
@@ -242,8 +243,7 @@ class ShoppingCartSerializer(BasicSerializer):
         model = ShoppingCart
         fields = ('user', 'recipe')
 
-    model = ShoppingCart
-    status = 'Рецепт уже есть в списке покупок!'
-
-    def validate_shopping_cart(self, data, model=model, status=status):
-        return self.validate(data=data, model=model, status=status)
+    def validate(self, data):
+        model = ShoppingCart
+        status = 'Рецепт уже есть в списке покупок!'
+        return super().validate(data=data, model=model, status=status)
