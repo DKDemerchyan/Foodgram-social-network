@@ -235,7 +235,6 @@ class FavoriteSerializer(BasicSerializer):
         return super().validate(data=data, model=model, status=status)
 
 
-#
 class ShoppingCartSerializer(BasicSerializer):
     """Сериализатор модели списка покупок."""
 
