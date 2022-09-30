@@ -229,9 +229,10 @@ class FavoriteSerializer(BasicSerializer):
         model = Favorite
         fields = ('user', 'recipe')
 
-    def validate_favorite(self, data):
-        status = 'Рецепт ранее добавлен в избранное.'
-        model = Favorite
+    model = Favorite
+    status = 'Рецепт ранее добавлен в избранное.'
+
+    def validate_favorite(self, data, model, status):
         return self.validate(data=data, model=model, status=status)
 
 
@@ -242,7 +243,8 @@ class ShoppingCartSerializer(BasicSerializer):
         model = ShoppingCart
         fields = ('user', 'recipe')
 
-    def validate_shopping_cart(self, data):
-        status = 'Рецепт уже есть в списке покупок!'
-        model = ShoppingCart
+    model = ShoppingCart
+    status = 'Рецепт уже есть в списке покупок!'
+
+    def validate_shopping_cart(self, data, model, status):
         return self.validate(data=data, model=model, status=status)
