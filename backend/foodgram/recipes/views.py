@@ -110,7 +110,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         today = datetime.today()
         shopping_list = (
-            f'Список покупок для: {user.shopping_carts}\n\n'
+            f'Список покупок для: {user.shopping_carts.recipe}\n\n'
             f'Дата: {today:%Y-%m-%d}\n\n'
         )
         shopping_list += '\n'.join([
