@@ -1,3 +1,4 @@
+from pyexpat import model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
@@ -64,20 +65,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         ingredients = IngredientInRecipe.objects.filter(recipe=obj)
         return IngredientReadSerializer(ingredients, many=True).data
 
-    def get_is_favorited(self, obj):
+    def get_is_in(self, obj):
         request = self.context.get('request')
         return (
             (request or not request.user.is_anonymous)
-            and Favorite.objects.filter(user=request.user, recipe=obj).exists()
+            and model.objects.filter(user=request.user, recipe=obj).exists()
         )
 
+    def get_is_favorited(self, obj):
+        return self.get_is_in(model=Favorite)
+
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        return (
-            (request or not request.user.is_anonymous)
-            and ShoppingCart.objects.filter(
-                user=request.user, recipe=obj).exists()
-        )
+        return self.get_is_in(model=ShoppingCart)
 
 
 class IngredientPostSerializer(serializers.ModelSerializer):
