@@ -30,7 +30,6 @@ class CustomUserSerializer(UserSerializer):
         return Follow.objects.filter(user=request.user, author=obj).exists()
 
 
-#
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
