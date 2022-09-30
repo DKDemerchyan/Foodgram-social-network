@@ -10,7 +10,7 @@ from .filters import IngredientSearchFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
 from .pagination import RecipePagination
-from .permissions import AuthorOrReadOnly
+#  from .permissions import AuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipePostSerializer, RecipeReadSerializer,
                           ShoppingCartSerializer, TagSerializer)
