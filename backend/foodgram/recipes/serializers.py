@@ -66,8 +66,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_in(self, obj, model):
         request = self.context.get('request')
-        return (
-            (request or not request.user.is_anonymous)
+        return bool(
+            (request and not request.user.is_anonymous)
             and model.objects.filter(user=request.user, recipe=obj).exists()
         )
 
